@@ -19,16 +19,20 @@ dependencies = [
     "joblib>=1.3.0",
 ]
 
-[project.optional-dependencies]
-dev = ["pytest>=8.0.0", "flake8>=7.0.0"]
-
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [tool.pdm.scripts]
 api = "uvicorn src.api.app:app --host 0.0.0.0 --port 8000"
 ui  = "python src/frontend/app.py"
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "flake8>=7.3.0",
+]
