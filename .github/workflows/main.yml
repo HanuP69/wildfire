@@ -1,0 +1,53 @@
+name: Wildfire MLOps CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install PDM
+        run: pip install pdm
+
+      - name: Install dependencies
+        run: pdm install --dev --no-lock
+
+      - name: Lint with flake8
+        continue-on-error: true
+        run: |
+          pdm run flake8 src/ \
+            --max-line-length=120 \
+            --extend-ignore=E203,W503 \
+            --per-file-ignores="__init__.py:F401"
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t wildfire-mlops:${{ github.sha }} .
+
+      - name: Smoke test API container
+        run: |
+          docker run -d --name test-api -e FIRMS_API_KEY=test -p 8000:8000 wildfire-mlops:${{ github.sha }} pdm run api
+          sleep 10
+          curl -f http://localhost:8000/docs || exit 1
+          docker stop test-api
