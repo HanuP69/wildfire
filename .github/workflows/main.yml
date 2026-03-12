@@ -24,7 +24,10 @@ jobs:
         run: pip install pdm
 
       - name: Install dependencies
-        run: pdm install --dev --no-lock
+        run: pdm install --dev --frozen-lockfile
+
+      - name: Run tests
+        run: pdm run pytest
 
       - name: Lint with flake8
         continue-on-error: true
