@@ -51,6 +51,7 @@ jobs:
       - name: Smoke test API container
         run: |
           docker run -d --name test-api -e FIRMS_API_KEY=test -p 8000:8000 wildfire-mlops:${{ github.sha }} pdm run api
-          sleep 10
-          curl -f http://localhost:8000/docs || exit 1
+          echo "Waiting for API to start..."
+          sleep 20
+          curl -v -f http://localhost:8000/docs || { docker logs test-api; exit 1; }
           docker stop test-api

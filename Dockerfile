@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl build-essential \
+    curl build-essential libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PDM
