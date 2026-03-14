@@ -8,8 +8,8 @@ from pydantic import BaseModel
 import joblib
 
 # Evidently AI imports
-from evidently.report import Report
-from evidently.metric_preset import DataDriftPreset
+from evidently import Report
+from evidently.presets import DataDriftPreset
 
 from src.model.wildfire import CNNLSTMModel, WildfireFusionModel
 from src.data.firms_client import generate_mock_tensor
