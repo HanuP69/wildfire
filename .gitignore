@@ -19,3 +19,4 @@ notebooks/vuln_intel.ipynb
 .pdm-build
 mlruns
 processed
+.env
